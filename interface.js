@@ -4,11 +4,12 @@ function setup() {
 	drawQuadrants = true;
 	quadStroke = 1;
 	pointSize = 4;
+	qtMargin = 50;
 	
 	gridWidth = 1024;
 	gridHeight = 1024;
 	
-	qt = new QuadTree(20, 20, gridWidth - 40, gridHeight - 40, 1);
+	qt = new QuadTree(0, 0, gridWidth, gridHeight, 1);
 
 	createCanvas(windowWidth, windowHeight);
 
@@ -16,7 +17,7 @@ function setup() {
 
 function draw() {
 
-	background(0);
+	background(170);
 	
 	//Draw QuadTree Boundary
 	fill(0);
@@ -53,7 +54,7 @@ function draw() {
 function mouseClicked() {
 
 	let mapped = mapMouse();
-	qt.ins(new Pnt(mapped[0], mapped[1]));
+	qt.ins(new Pnt(mapped[0], mapped[1], [random(-5,5), random(-5,5)]));
 
 }
 
@@ -66,10 +67,10 @@ function windowResized() {
 
 function mapRect(r) {
 	
-	let x = map(r.x, 0, gridWidth, 0, windowWidth);
-	let y = map(r.y, 0, gridHeight, 0, windowHeight);
-	let w = map(r.w, 0, gridWidth, 0, windowWidth);
-	let h = map(r.h, 0, gridHeight, 0, windowHeight);
+	let x = map(r.x, 0, gridWidth, qtMargin, windowWidth - qtMargin);
+	let y = map(r.y, 0, gridHeight, qtMargin, windowHeight - qtMargin);
+	let w = map(r.w, 0, gridWidth, 0, windowWidth - qtMargin*2);
+	let h = map(r.h, 0, gridHeight, 0, windowHeight - qtMargin*2);
 	
 	return [x, y, w, h];
 	
@@ -77,8 +78,8 @@ function mapRect(r) {
 
 function mapPnt(p) {
 	
-	let x = map(p.x, 0, gridWidth, 0, windowWidth);
-	let y = map(p.y, 0, gridHeight, 0, windowHeight);
+	let x = map(p.x, 0, gridWidth, qtMargin, windowWidth - qtMargin);
+	let y = map(p.y, 0, gridHeight, qtMargin, windowHeight - qtMargin);
 	
 	return [x, y];
 	
@@ -86,8 +87,8 @@ function mapPnt(p) {
 
 function mapMouse() {
 	
-	let x = map(mouseX, 0, windowWidth, 0, gridWidth);
-	let y = map(mouseY, 0, windowHeight, 0, gridHeight);
+	let x = map(mouseX, qtMargin, windowWidth - qtMargin, 0, gridWidth);
+	let y = map(mouseY, qtMargin, windowHeight - qtMargin, 0, gridHeight);
 	
 	return [x, y];
 	
