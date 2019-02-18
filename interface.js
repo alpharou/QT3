@@ -93,3 +93,15 @@ function mapMouse() {
 	return [x, y];
 	
 }
+
+function moveDots() {
+	
+	//TODO
+	
+}
+
+function deflectDots(a, b) {
+	
+	//TODO
+	
+}
