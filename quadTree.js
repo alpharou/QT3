@@ -16,7 +16,7 @@ class QuadTree {
 	}
 
 	clear() {
-		this.points = [Pnt];
+		this.points = [];
 		this.root = new Quadrant(this.r.x, this.r.y, this.r.w, this.r.h, this);
 		return true;
 	}
@@ -46,6 +46,27 @@ class QuadTree {
 		}
 
 		return false;
+	}
+	
+	query(zone) {
+		
+		//TODO
+		
+		let nearLeaves = [];
+		
+		let leaves = this.getLeaves();
+		
+		if (!(zone instanceof Circ) && !(zone instanceof Rect)) {return "ERROR query(): Zone is not a valid shape";}
+
+		
+		for (let i = 0; i < leaves.length; i++) {
+			
+			if (zone.intersects(leaves[i].r)) {nearLeaves.push(leaves[i]);}
+			
+		}
+		
+		return nearLeaves;
+		
 	}
 
 }

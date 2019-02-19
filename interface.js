@@ -3,13 +3,14 @@ function setup() {
 	//General variables
 	drawQuadrants = true;
 	quadStroke = 1;
-	pointSize = 4;
+	minSize = 5;
+	maxSize = 20;
 	qtMargin = 50;
 	
 	gridWidth = 1024;
 	gridHeight = 1024;
 	
-	qt = new QuadTree(0, 0, gridWidth, gridHeight, 1);
+	qt = new QuadTree(0, 0, gridWidth, gridHeight, 4);
 
 	createCanvas(windowWidth, windowHeight);
 
@@ -17,7 +18,7 @@ function setup() {
 
 function draw() {
 
-	background(170);
+	background(30);
 	
 	//Draw QuadTree Boundary
 	fill(0);
@@ -41,20 +42,51 @@ function draw() {
 		}
 		
 	}
+	
+	
+	
+	//TODO: TEMP DRAW NEARLEAVES
+	let zoney = new Circ(mapMouse()[0], mapMouse()[1], 50);
+	let quadrants = qt.query(zoney);
+
+		for (let q of quadrants) {
+
+				fill(0);
+				mapped = mapRect(q.r);
+				rect(mapped[0], mapped[1], mapped[2], mapped[3]);
+				fill(255, 0, 0);
+				rect(mapped[0] + quadStroke/2, mapped[1] + quadStroke/2, mapped[2] - quadStroke, mapped[3] - quadStroke);
+
+		}
+	fill(255, 0, 255);
+	ellipse(mouseX, mouseY, zoney.r);
+
+
+
 
 	//Draw points
 	fill(0);
 	let points = qt.getPoints();
-	for (let p of points) {
-		mapped = mapPnt(p);
-		ellipse(mapped[0], mapped[1], pointSize);
+	if (points.length > 0) {
+		
+		for (let i = 0; i < points.length; i++) {
+			mapped = mapPnt(qt.points[i]);
+			ellipse(mapped[0], mapped[1], qt.points[i].data[2]);
+		}
+		
 	}
+	
+	
+	//UPDATE
+	moveDots(qt.points);
+	qt.build();
+	
 }
 
 function mouseClicked() {
 
 	let mapped = mapMouse();
-	qt.ins(new Pnt(mapped[0], mapped[1], [random(-5,5), random(-5,5)]));
+	qt.ins(new Pnt(mapped[0], mapped[1], [random(-15,15), random(-15,15), random(minSize,maxSize)]));
 
 }
 
@@ -94,14 +126,79 @@ function mapMouse() {
 	
 }
 
-function moveDots() {
+function moveDots(points) {
 	
-	//TODO
+	if (typeof points != "object") {return false;}
+	if (typeof points[0] != "object") {return false;}
+	
+	let tempPos;
+	
+	for (let i = 0; i < points.length; i++) {
+		
+		tempPos = [points[i].x + points[i].data[0], points[i].y + points[i].data[1]];
+		if (tempPos[0] + points[i].data[2] > gridWidth) {
+			
+			deflectDot(points[i], "VERT");
+			return "DEFLECTED VERT";
+			
+		}
+		if (tempPos[0] - points[i].data[2] < 0) {
+			
+			deflectDot(points[i], "VERT");
+			return "DEFLECTED VERT";
+			
+		}
+		if (tempPos[1] + points[i].data[2] > gridHeight) {	
+			
+			deflectDot(points[i], "HORI");
+			return "DEFLECTED HORI";
+			
+		}
+		if (tempPos[1] - points[i].data[2] < 0) {
+			
+			deflectDot(points[i], "HORI");
+			return "DEFLECTED HORI";
+			
+		}
+		
+		
+		points[i].x = tempPos[0];
+		points[i].y = tempPos[1];
+ 		
+	}
+	
+	return true;
 	
 }
 
-function deflectDots(a, b) {
+function deflectDot(a, direction) {
 	
-	//TODO
+	if (typeof a != "object") {return false;}
+	if (typeof a.data != "object") {return false;}
+	
+	if (direction == "VERT") {
+		
+		a.data[0] = -a.data[0];
+		return true;
+	
+	}
+	
+	if (direction == "HORI") {
+		
+		a.data[1] = -a.data[1];
+		return true;
+		
+	}
+	
+	return false;
+}
+
+function bounceDots(a, b) {
+	
+	//CRUDE WAY TO DO IT
+	let temp = a.data;
+	a.data = b.data;
+	b.data = temp;
+	return true;
 	
 }
