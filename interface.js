@@ -3,14 +3,14 @@ function setup() {
 	//General variables
 	drawQuadrants = true;
 	quadStroke = 1;
-	minSize = 5;
-	maxSize = 20;
+	minSize = 15; //Of the RADIUS
+	maxSize = 30;
 	qtMargin = 50;
 	
-	gridWidth = 1024;
-	gridHeight = 1024;
+	gridWidth = 2048;
+	gridHeight = 2048;
 	
-	qt = new QuadTree(0, 0, gridWidth, gridHeight, 4);
+	qt = new QuadTree(0, 0, gridWidth, gridHeight, 5);
 
 	createCanvas(windowWidth, windowHeight);
 
@@ -54,12 +54,13 @@ function draw() {
 				fill(0);
 				mapped = mapRect(q.r);
 				rect(mapped[0], mapped[1], mapped[2], mapped[3]);
-				fill(255, 0, 0);
+				fill(253, 35, 76);
 				rect(mapped[0] + quadStroke/2, mapped[1] + quadStroke/2, mapped[2] - quadStroke, mapped[3] - quadStroke);
 
 		}
 	fill(255, 0, 255);
-	ellipse(mouseX, mouseY, zoney.r);
+	//TEMP, not scalable
+	ellipse(mouseX, mouseY, zoney.r*2);
 
 
 
@@ -71,7 +72,7 @@ function draw() {
 		
 		for (let i = 0; i < points.length; i++) {
 			mapped = mapPnt(qt.points[i]);
-			ellipse(mapped[0], mapped[1], qt.points[i].data[2]);
+			ellipse(mapped[0], mapped[1], qt.points[i].data[2]*2);
 		}
 		
 	}
@@ -86,7 +87,7 @@ function draw() {
 function mouseClicked() {
 
 	let mapped = mapMouse();
-	qt.ins(new Pnt(mapped[0], mapped[1], [random(-15,15), random(-15,15), random(minSize,maxSize)]));
+	qt.ins(new Pnt(mapped[0], mapped[1], [random(-5,5), random(-5,5), random(minSize,maxSize)]));
 
 }
 
@@ -128,6 +129,7 @@ function mapMouse() {
 
 function moveDots(points) {
 	
+	//TODO Use the quadtree to reduce the number of wall deflection checks
 	if (typeof points != "object") {return false;}
 	if (typeof points[0] != "object") {return false;}
 	
@@ -195,7 +197,6 @@ function deflectDot(a, direction) {
 
 function bounceDots(a, b) {
 	
-	//CRUDE WAY TO DO IT
 	let temp = a.data;
 	a.data = b.data;
 	b.data = temp;
