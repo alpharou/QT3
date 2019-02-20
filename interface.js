@@ -3,8 +3,8 @@ function setup() {
 	//General variables
 	drawQuadrants = true;
 	quadStroke = 1;
-	minSize = 15; //Of the RADIUS
-	maxSize = 30;
+	minSize = 5; //Of the RADIUS
+	maxSize = 15;
 	qtMargin = 50;
 	
 	gridWidth = 2048;
