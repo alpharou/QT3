@@ -50,8 +50,6 @@ class QuadTree {
 	
 	query(zone) {
 		
-		//TODO
-		
 		let nearLeaves = [];
 		
 		let leaves = this.getLeaves();
@@ -66,6 +64,36 @@ class QuadTree {
 		}
 		
 		return nearLeaves;
+		
+	}
+	
+	queryPoints(zone) {
+		
+		let nearPoints = [];
+		
+		let leaves = this.getLeaves();
+		
+		if (!(zone instanceof Circ) && !(zone instanceof Rect)) {return "ERROR query(): Zone is not a valid shape";}
+
+		for (let quad of leaves) {
+			
+			if (zone.intersects(quad.r)) {
+				
+				for (let dot of quad.points) {
+					
+					if (zone.intersects(new Circ(dot.x, dot.y, dot.data[2]))) {
+						
+						nearPoints.push(dot);
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		return nearPoints;
 		
 	}
 
@@ -197,6 +225,17 @@ class Circ {
 		this.r = r;
 		this.r2 = r + r;
 		this.rr = r * r;
+	}
+	
+	radius(radius) {
+		
+		if (isNaN(radius)) {return this.r;}
+		
+		this.r = radius;
+		this.r2 = radius + radius;
+		this.rr = radius * radius;
+		return this.r;
+		
 	}
 
 	contains(p) {
